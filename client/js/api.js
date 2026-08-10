@@ -2,7 +2,9 @@
  * TaskFlow Pro API Service
  * Handles communication with the Express + MongoDB backend REST API
  */
-const API_BASE_URL = 'http://localhost:5000/api/todos';
+const API_BASE_URL = (window.location.port === '5500' || window.location.port === '3000') 
+  ? 'http://localhost:5000/api/todos' 
+  : '/api/todos';
 
 const TodoAPI = {
   /**

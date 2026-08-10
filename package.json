@@ -2,8 +2,10 @@
   "name": "todo-crud-app",
   "version": "1.0.0",
   "description": "Full-stack Todo application",
+  "main": "server/src/server.js",
   "scripts": {
-    "start": "npm run start --prefix server",
+    "start": "node server/src/server.js",
+    "build": "npm install --prefix server",
     "dev": "npm run dev --prefix server"
   }
 }
