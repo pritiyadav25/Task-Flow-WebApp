@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow Pro | Modern Todo Dashboard</title>
+  <meta name="description" content="A full-stack glassmorphic task management application powered by Express, MongoDB, and modern Web design.">
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="background-glob glob-1"></div>
+  <div class="background-glob glob-2"></div>
+  <div class="background-glob glob-3"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-branding">
+        <div class="logo-icon">
+          <i class="fa-solid fa-check-double"></i>
+        </div>
+        <div>
+          <h1>TaskFlow <span class="badge-pro">PRO</span></h1>
+          <p class="subtitle" id="current-date">Loading date...</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="theme-toggle" class="btn-icon" title="Toggle Light/Dark Theme">
+          <i class="fa-solid fa-sun" id="theme-icon"></i>
+        </button>
+        <button id="btn-open-modal" class="btn btn-primary">
+          <i class="fa-solid fa-plus"></i>
+          <span>New Task</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Dashboard Stats Grid -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon stat-total">
+          <i class="fa-solid fa-list-check"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Total Tasks</span>
+          <h2 id="stat-total" class="stat-value">0</h2>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-active">
+          <i class="fa-solid fa-clock"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Pending</span>
+          <h2 id="stat-active" class="stat-value">0</h2>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-completed">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Completed</span>
+          <h2 id="stat-completed" class="stat-value">0</h2>
+        </div>
+      </div>
+
+      <div class="stat-card progress-card">
+        <div class="stat-info-full">
+          <div class="progress-header">
+            <span class="stat-label">Progress</span>
+            <span id="stat-rate" class="progress-percent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toolbar: Search, Filters, Tabs -->
+    <section class="toolbar-section">
+      <!-- Status Tabs -->
+      <div class="status-tabs">
+        <button class="tab-btn active" data-status="all">
+          <i class="fa-solid fa-boxes-stacked"></i> All
+        </button>
+        <button class="tab-btn" data-status="active">
+          <i class="fa-regular fa-circle"></i> Active
+        </button>
+        <button class="tab-btn" data-status="completed">
+          <i class="fa-regular fa-circle-check"></i> Completed
+        </button>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="filters-wrapper">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="search-input" placeholder="Search tasks...">
+          <button id="clear-search" class="btn-clear hidden">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="select-group">
+          <select id="filter-category" class="custom-select">
+            <option value="all">All Categories</option>
+            <option value="Work">Work</option>
+            <option value="Personal">Personal</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Health">Health</option>
+            <option value="General">General</option>
+          </select>
+
+          <select id="filter-priority" class="custom-select">
+            <option value="all">All Priorities</option>
+            <option value="high">High Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="low">Low Priority</option>
+          </select>
+
+          <select id="sort-by" class="custom-select">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="dueDate">Due Date</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Task List Container -->
+    <main class="tasks-container">
+      <div id="loading-spinner" class="spinner-wrapper hidden">
+        <div class="spinner"></div>
+        <p>Syncing with MongoDB database...</p>
+      </div>
+
+      <div id="todo-list" class="todo-list">
+        <!-- Dynamic Todo items will be rendered here -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-icon">
+          <i class="fa-solid fa-clipboard-list"></i>
+        </div>
+        <h3>No Tasks Found</h3>
+        <p id="empty-message">You have no tasks matching your filters. Create a new task to get started!</p>
+        <button id="empty-btn-add" class="btn btn-secondary mt-3">
+          <i class="fa-solid fa-plus"></i> Create Task
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal for Create / Edit Task -->
+  <div id="task-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modal-title"><i class="fa-solid fa-pen-to-square"></i> Create New Task</h2>
+        <button id="modal-close" class="btn-icon-sm">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form id="task-form">
+        <input type="hidden" id="task-id">
+
+        <div class="form-group">
+          <label for="input-title">Task Title <span class="required">*</span></label>
+          <input type="text" id="input-title" placeholder="e.g., Finalize Q3 Marketing Report" required maxlength="120">
+        </div>
+
+        <div class="form-group">
+          <label for="input-description">Description</label>
+          <textarea id="input-description" rows="3" placeholder="Add additional details or notes..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="input-category">Category</label>
+            <select id="input-category">
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Health">Health</option>
+              <option value="General" selected>General</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="input-priority">Priority</label>
+            <select id="input-priority">
+              <option value="low">Low Priority</option>
+              <option value="medium" selected>Medium Priority</option>
+              <option value="high">High Priority</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-due-date">Due Date</label>
+          <input type="date" id="input-due-date">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="btn-cancel" class="btn btn-ghost">Cancel</button>
+          <button type="submit" id="btn-save" class="btn btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i> Save Task
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- App JavaScript Modules -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

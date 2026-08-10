@@ -1,0 +1,9 @@
+{
+  "name": "todo-crud-app",
+  "version": "1.0.0",
+  "description": "Full-stack Todo application",
+  "scripts": {
+    "start": "npm run start --prefix server",
+    "dev": "npm run dev --prefix server"
+  }
+}

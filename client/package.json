@@ -1,0 +1,9 @@
+{
+  "name": "todo-client",
+  "version": "1.0.0",
+  "description": "Frontend static client for Todo application",
+  "scripts": {
+    "start": "npm run start --prefix ../server",
+    "dev": "npm run dev --prefix ../server"
+  }
+}
